@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,14 +28,15 @@
       <div class="divider"></div>
 
       <div class="hud-actions">
-        <button id="btn-search" class="btn btn-accent" title="Поиск и телепорт по файлам (Ctrl+K)">🔍 Ctrl+K</button>
-        <button id="btn-github" class="btn" title="Загрузить публичный репозиторий GitHub">🐙 GitHub</button>
-        <button id="btn-open-folder" class="btn" title="Открыть локальную папку в браузере">📂 Папка</button>
-        <button id="btn-demo" class="btn" title="Открыть встроенный демо-проект">✨ Демо</button>
-        <button id="btn-export-svg" class="btn" title="Сохранить векторный SVG-снимок вселенной">📸 SVG</button>
-        <button id="btn-export-mmd" class="btn" title="Экспортировать граф в Mermaid (.mmd)">📐 Mermaid</button>
-        <button id="btn-collapse" class="btn" title="Свернуть все папки до корня">◈ Корень</button>
-        <button id="btn-center" class="btn" title="Центрировать камеру">🎯 Центр</button>
+        <button id="btn-search" class="btn btn-accent" title="Ctrl+K">🔍 Ctrl+K</button>
+        <button id="btn-github" class="btn">🐙 GitHub</button>
+        <button id="btn-open-folder" class="btn">📂 Folder</button>
+        <button id="btn-demo" class="btn">✨ Demo</button>
+        <button id="btn-export-svg" class="btn">📸 SVG</button>
+        <button id="btn-export-mmd" class="btn">📐 Mermaid</button>
+        <button id="btn-collapse" class="btn">◈ Root</button>
+        <button id="btn-center" class="btn">🎯 Center</button>
+        <button id="btn-lang" class="btn btn-accent" title="Switch language (EN / RU)">🌐 EN</button>
       </div>
       <input id="folder-input" type="file" webkitdirectory directory multiple hidden />
     </header>
@@ -79,9 +80,9 @@
       </button>
 
       <div class="tabs">
-        <button class="tab active" data-tab="code">Код</button>
-        <button class="tab" data-tab="symbols">Символы <span id="sym-count" class="tab-count">0</span></button>
-        <button class="tab" data-tab="links">Связи <span id="link-count" class="tab-count">0</span></button>
+        <button id="tab-btn-code" class="tab active" data-tab="code">Code</button>
+        <button id="tab-btn-symbols" class="tab" data-tab="symbols"><span id="tab-lbl-symbols">Symbols</span> <span id="sym-count" class="tab-count">0</span></button>
+        <button id="tab-btn-links" class="tab" data-tab="links"><span id="tab-lbl-links">Links</span> <span id="link-count" class="tab-count">0</span></button>
       </div>
 
       <div id="tab-code" class="tab-pane active">
@@ -94,11 +95,11 @@
 
       <div id="tab-links" class="tab-pane">
         <div class="links-group">
-          <h4>Импортирует (исходящие →)</h4>
+          <h4 id="links-out-title">Imports (outgoing →)</h4>
           <ul id="links-out" class="item-list"></ul>
         </div>
         <div class="links-group">
-          <h4>Используется в (входящие ←)</h4>
+          <h4 id="links-in-title">Used by (incoming ←)</h4>
           <ul id="links-in" class="item-list"></ul>
         </div>
       </div>
@@ -108,10 +109,10 @@
     <div id="modal-search" class="modal-backdrop hidden">
       <div class="modal-card glass">
         <div class="modal-head">
-          <span>🔍 Телепорт по вселенной</span>
+          <span id="search-modal-title">🔍 Universe Teleport</span>
           <span class="kbd">ESC</span>
         </div>
-        <input id="search-input" class="modal-input" type="text" placeholder="Введи имя файла или папки..." autocomplete="off" />
+        <input id="search-input" class="modal-input" type="text" placeholder="Type a file or folder name..." autocomplete="off" />
         <ul id="search-results" class="search-list"></ul>
       </div>
     </div>
@@ -120,27 +121,27 @@
     <div id="modal-github" class="modal-backdrop hidden">
       <div class="modal-card glass">
         <div class="modal-head">
-          <span>🐙 Загрузить репозиторий GitHub</span>
+          <span id="gh-modal-title">🐙 Load GitHub Repository</span>
           <button id="btn-close-gh" class="btn-icon">✕</button>
         </div>
-        <input id="gh-input" class="modal-input" type="text" placeholder="owner/repo или https://github.com/owner/repo" />
+        <input id="gh-input" class="modal-input" type="text" placeholder="owner/repo or https://github.com/owner/repo" />
         <div class="gh-presets">
-          <span class="project-stats">Примеры:</span>
+          <span id="gh-presets-lbl" class="project-stats">Examples:</span>
           <button class="chip chip-btn" data-repo="Goblin-Inc/Gob-Inc-shell">Gob-Inc-shell</button>
           <button class="chip chip-btn" data-repo="Goblin-Inc/SecretScan">SecretScan</button>
           <button class="chip chip-btn" data-repo="pallets/flask">pallets/flask</button>
         </div>
         <div id="gh-status" class="gh-status"></div>
-        <button id="btn-gh-load" class="btn-deps">🚀 Загрузить в космос</button>
+        <button id="btn-gh-load" class="btn-deps">🚀 Launch into Universe</button>
       </div>
     </div>
 
     <!-- Bottom Legend & Hints -->
     <footer class="hud-bottom glass">
-      <span class="legend-item"><i class="dot dot-white"></i>Структура</span>
-      <span class="legend-item"><i class="dot dot-gold"></i>Импорты</span>
-      <span class="legend-item"><i class="dot dot-teal"></i>Маршрут</span>
-      <span class="hint">Ctrl+K — телепорт · Клик по папке — раскрыть · Esc — сброс</span>
+      <span class="legend-item"><i class="dot dot-white"></i><span id="lbl-legend-struct">Structure</span></span>
+      <span class="legend-item"><i class="dot dot-gold"></i><span id="lbl-legend-deps">Imports</span></span>
+      <span class="legend-item"><i class="dot dot-teal"></i><span id="lbl-legend-route">Route</span></span>
+      <span id="lbl-hint-bottom" class="hint">Ctrl+K — teleport · Click folder — expand · Esc — reset</span>
     </footer>
   </div>
 

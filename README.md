@@ -1,32 +1,70 @@
-# ✦ Project Atlas
+<p align="center">
+  <img src="assets/hero-banner.svg" alt="Project Atlas Banner" width="100%" />
+</p>
 
-> **Explore any codebase as a living interactive universe — understand architecture in 30 seconds.**
+<p align="center">
+  <a href="https://goblin-inc.github.io/Project-Atlas/"><img src="https://img.shields.io/badge/🚀_Live_Demo-Launch_Atlas-b4befe?style=for-the-badge&labelColor=0b0e1c" alt="Live Demo" /></a>
+  <a href="https://github.com/Goblin-Inc/Project-Atlas/releases/tag/v1.0.1"><img src="https://img.shields.io/badge/Release-v1.0.1-facc15?style=for-the-badge&labelColor=0b0e1c" alt="Version" /></a>
+  <img src="https://img.shields.io/badge/Dependencies-Zero-a6e3a1?style=for-the-badge&labelColor=0b0e1c" alt="Zero Dependencies" />
+  <img src="https://img.shields.io/badge/UI-EN_%2F_RU-2dd4bf?style=for-the-badge&labelColor=0b0e1c" alt="EN / RU" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-cba6f7?style=for-the-badge&labelColor=0b0e1c" alt="MIT License" /></a>
+</p>
 
-**[🚀 Try Live Demo](https://goblin-inc.github.io/Project-Atlas/)** · **[Русская версия](README_Ru.md)**
-
-**Project Atlas** turns local folders and public GitHub repositories into an interactive, 60 FPS constellation map. Instead of dumping 500 overlapping nodes at once, Atlas starts from the project root and lets you expand folders organically, inspect syntax-highlighted code on the right, and illuminate golden dependency rays on demand.
+<p align="center">
+  <b><a href="https://goblin-inc.github.io/Project-Atlas/">🚀 Try Live Demo</a></b> ·
+  <a href="README_Ru.md">🇷🇺 Русская версия</a> ·
+  <a href="#-quick-start">Quick Start</a> ·
+  <a href="#-4-architecture-lenses">Lenses</a>
+</p>
 
 ---
 
-## ✨ Key Features
+**Project Atlas** turns any local folder or public GitHub repository into an interactive, **60 FPS constellation universe** — helping you understand an unfamiliar codebase in **30 seconds**.
 
-- **🌌 Progressive-Disclosure Constellations** — starts clean at the root; click any folder to expand its star cluster with organic constellation layout, zero-gravity float, and automatic dimming of inactive branches on large repositories.
-- **⚡ Golden Dependency Mode** — click any file and hit **"Show imports & dependencies"**: Atlas auto-expands connected branches, smoothly frames the camera, dims unrelated files, and draws animated golden dependency rays over the white structural rays.
-- **🔭 4 Architecture Lenses:**
-  - **🌌 Structure** — clean constellation overview of folders & files.
-  - **🔥 Blast Radius** — click any file to see the BFS wave of direct & indirect downstream files impacted by changes.
-  - **🩺 Health** — computes a 0–100 Health Score and highlights circular dependencies, monoliths (god-files), and orphan code files.
-  - **🧭 Reading Route** — automatically detects entry points and numbers the recommended onboarding trail (`1 → 2 → 3 → ...`).
-- **🔍 `Ctrl + K` Universe Teleport** — instant fuzzy search across files & folders; pressing Enter expands the path and flies the camera straight to the target star.
-- **🐙 Zero-Backend GitHub Loader + Local Folder Picker** — paste any `owner/repo` URL, open a local folder directly in the browser, or launch via CLI (`atlas .`) with zero external dependencies.
-- **📸 One-Click Export** — save a crisp vector **SVG** snapshot of the universe (immune to browser Canvas anti-fingerprinting) or export the dependency graph as **Mermaid (`.mmd`)** (copied to clipboard automatically).
-- **🧠 Multi-Language Static Parser** — Python, JavaScript/TypeScript, Java, C/C++, Rust, Go, Lua, HTML, CSS.
+Instead of dumping 500 overlapping nodes into an unreadable hairball, Atlas starts cleanly at the project root: expand folders organically like constellations, inspect syntax-highlighted code & symbols on the right, and trigger **animated golden dependency rays** on demand.
+
+---
+
+## 🖼️ Live Preview
+
+### Exploring a Large Repository (`ChrisTitusTech/winutil` via GitHub URL)
+> Active branch stays crisp and glowing while inactive constellations softly dim to keep 60 FPS and zero visual clutter.
+
+<p align="center">
+  <img src="assets/preview-winutil.jpg" alt="Project Atlas — ChrisTitusTech/winutil constellation view" width="96%" />
+</p>
+
+---
+
+## ✨ What Makes Atlas Different
+
+- **🌌 Progressive-Disclosure Constellations** — starts at the root; click any folder to expand its star cluster with organic constellation layout, subtle zero-gravity motion, and auto-dimming of inactive branches.
+- **⚡ On-Demand Golden Dependency Mode** — select any file and click **"Show imports & dependencies"**: Atlas auto-expands connected folders, smoothly frames the camera around related files, dims unrelated noise, and draws **animated golden dependency rays** over the white structural rays.
+- **🔍 `Ctrl + K` Universe Teleport** — fuzzy search across all files & folders; hit Enter and the camera flies straight to the star, automatically expanding its path.
+- **🐙 Zero-Backend GitHub Loader + Local CLI** — load any public `owner/repo` straight in the browser, open a local folder privately via browser picker, or run `atlas .` from your terminal with **zero third-party packages**.
+- **🌐 Bilingual UI (`EN / RU`)** — auto-detects browser language with an instant `🌐 EN / RU` toggle in the top HUD.
+- **📸 Crisp Vector Export** — save an infinite-resolution **SVG** snapshot (immune to browser Canvas anti-fingerprinting) or export a **Mermaid (`.mmd`)** graph straight to your clipboard.
+
+---
+
+## 🔭 4 Architecture Lenses
+
+| Lens | What It Shows |
+|---|---|
+| **🌌 Structure** | Clean constellation map of folders and files connected by white hierarchy rays. |
+| **🔥 Blast Radius** | Click any file to trigger a BFS impact wave (1st / 2nd / 3rd hop) showing everything that could break if you edit it. |
+| **🩺 Health** | Computes a **0–100 Health Score** and highlights circular dependencies (red), monolith god-files (orange), and orphan code files (dashed). |
+| **🧭 Reading Route** | Detects entry points automatically and numbers a guided onboarding trail (`1 → 2 → 3 → ...`) through core modules. |
 
 ---
 
 ## 🚀 Quick Start
 
-### Option 1 — Local CLI (Linux / macOS / Windows with Python 3)
+### Option 1 — Live Web App (Zero Install)
+Open **[goblin-inc.github.io/Project-Atlas](https://goblin-inc.github.io/Project-Atlas/)** to test the built-in **Demo**, open any **Local Folder** (100% client-side), or paste any **GitHub URL**.
+
+### Option 2 — Local CLI (`atlas .`)
+Requires only **Python 3** (standard library, zero pip installs):
 ```bash
 git clone https://github.com/Goblin-Inc/Project-Atlas.git
 cd Project-Atlas
@@ -34,12 +72,14 @@ cd Project-Atlas
 
 # Launch inside any project folder:
 atlas .
-# or specify a path:
+# or point to a path:
 atlas ~/Projects/my-app
 ```
 
-### Option 2 — Pure Static Web App (Zero Server)
-Simply open `web/index.html` on any static host (e.g., GitHub Pages) to use the **built-in Demo**, **Local Folder Picker**, and **GitHub Repo Loader** directly in the browser.
+---
+
+## 🧠 Supported Languages (Import & Symbol Parsing)
+`Python` · `JavaScript / JSX` · `TypeScript / TSX` · `Java` · `C / C++` · `Rust` · `Go` · `Lua` · `HTML` · `CSS`
 
 ---
 
@@ -48,17 +88,13 @@ Simply open `web/index.html` on any static host (e.g., GitHub Pages) to use the 
 | Action | Control |
 |---|---|
 | Expand / collapse folder | Click folder star |
-| Inspect file code & symbols | Click file star |
-| Show golden dependency rays | Click **⚡ Show imports & dependencies** in inspector |
+| Inspect code, symbols & links | Click file star |
+| Golden dependency rays + camera focus | Click **⚡ Show imports & dependencies** |
 | Teleport to any file / folder | `Ctrl + K` |
 | Pan / Zoom universe | Drag canvas / Mouse wheel |
-| Exit lens or dependency focus | `Esc` |
+| Reset lens or dependency mode | `Esc` |
 
 ---
-
-## 🛠️ Tech Stack
-- **Frontend:** Vanilla ES Modules + HTML5 Canvas 2D (60 FPS, zero build step, zero npm bloat)
-- **CLI Server:** Python 3 standard library (`http.server`, zero third-party packages)
 
 ## 📄 License
 MIT © [Goblin-Inc](https://github.com/Goblin-Inc)

@@ -1,6 +1,6 @@
 /**
- * Project Atlas — Main Application Controller (v0.2.0-beta)
- * Features: 4 Lenses, Golden Dependency Mode, Ctrl+K Teleport, GitHub Loader
+ * Project Atlas — Main Application Controller (v1.0.1)
+ * Features: EN/RU i18n, 4 Lenses, Golden Dependency Mode, Ctrl+K Teleport, GitHub Loader, SVG/Mermaid Export
  */
 
 import { AtlasGraph } from "./graph.js";
@@ -9,6 +9,7 @@ import { highlightCode } from "./parser.js";
 import { DEMO_PROJECT } from "./demo-data.js";
 import { loadGitHubRepo } from "./github.js";
 import { exportUniverseSVG, generateMermaid, downloadTextFile } from "./export.js";
+import { STRINGS, detectLang, saveLang } from "./i18n.js";
 
 const IGNORE_SEGMENTS = new Set([
   ".git", "node_modules", "__pycache__", ".venv", "venv",
@@ -16,6 +17,9 @@ const IGNORE_SEGMENTS = new Set([
 ]);
 
 const $ = (id) => document.getElementById(id);
+
+let lang = detectLang();
+const t = () => STRINGS[lang];
 
 let graph = null;
 let selectedFile = null;
@@ -34,13 +38,61 @@ const renderer = new CosmosRenderer($("cosmos"), {
   onClearDepFocus: (silent) => {
     depActive = false;
     $("btn-show-deps").classList.remove("active");
-    $("btn-show-deps").textContent = "⚡ Показать импорты и зависимости";
+    $("btn-show-deps").textContent = t().btnShowDeps;
     if (!silent) {
       renderer.clearDepFocus();
       if (currentLens === "structure") hideBanner();
     }
   },
 });
+
+function applyI18n() {
+  const s = t();
+  document.documentElement.lang = lang;
+
+  $("btn-lang").textContent = lang === "en" ? "🌐 EN" : "🌐 RU";
+  $("btn-search").textContent = s.btnSearch;
+  $("btn-github").textContent = s.btnGithub;
+  $("btn-open-folder").textContent = s.btnFolder;
+  $("btn-demo").textContent = s.btnDemo;
+  $("btn-export-svg").textContent = s.btnSvg;
+  $("btn-export-mmd").textContent = s.btnMmd;
+  $("btn-collapse").textContent = s.btnRoot;
+  $("btn-center").textContent = s.btnCenter;
+
+  document.querySelector('.lens-btn[data-lens="structure"]').textContent = s.lensStructure;
+  document.querySelector('.lens-btn[data-lens="blast"]').textContent = s.lensBlast;
+  document.querySelector('.lens-btn[data-lens="health"]').textContent = s.lensHealth;
+  document.querySelector('.lens-btn[data-lens="route"]').textContent = s.lensRoute;
+
+  $("btn-exit-banner").textContent = s.btnResetBanner;
+  $("tab-btn-code").textContent = s.tabCode;
+  $("tab-lbl-symbols").textContent = s.tabSymbols;
+  $("tab-lbl-links").textContent = s.tabLinks;
+  $("links-out-title").textContent = s.linksOutTitle;
+  $("links-in-title").textContent = s.linksInTitle;
+
+  $("search-modal-title").textContent = s.searchTitle;
+  $("search-input").placeholder = s.searchPlaceholder;
+  $("gh-modal-title").textContent = s.ghTitle;
+  $("gh-input").placeholder = s.ghPlaceholder;
+  $("gh-presets-lbl").textContent = s.ghPresets;
+  $("btn-gh-load").textContent = s.ghLoadBtn;
+
+  $("lbl-legend-struct").textContent = s.legendStruct;
+  $("lbl-legend-deps").textContent = s.legendDeps;
+  $("lbl-legend-route").textContent = s.legendRoute;
+  $("lbl-hint-bottom").textContent = s.hintBottom;
+
+  if (graph) {
+    $("project-stats").textContent = `${graph.fileCount} ${s.files} · ${graph.edgeCount} ${s.links}`;
+  }
+  if (selectedFile) {
+    $("chip-lines").textContent = `${selectedFile.file.lines} ${s.lines}`;
+    $("chip-deps").textContent = s.chipDeps(selectedFile.importedBy.length, selectedFile.imports.length);
+    $("btn-show-deps").textContent = depActive ? s.btnHideDeps : s.btnShowDeps;
+  }
+}
 
 function showBanner(html) {
   $("lens-banner-text").innerHTML = html;
@@ -61,7 +113,7 @@ function loadProject(data) {
   updateLensButtons("structure");
 
   $("project-name").textContent = data.name;
-  $("project-stats").textContent = `${graph.fileCount} файлов · ${graph.edgeCount} связей`;
+  $("project-stats").textContent = `${graph.fileCount} ${t().files} · ${graph.edgeCount} ${t().links}`;
   renderer.setGraph(graph);
 }
 
@@ -73,15 +125,15 @@ function updateLensButtons(lens) {
 
 function applyLens(lens) {
   if (!graph) return;
+  const s = t();
   currentLens = lens;
   updateLensButtons(lens);
 
-  // Reset golden single-file dep mode when switching lenses
   if (depActive) {
     depActive = false;
     renderer.clearDepFocus();
     $("btn-show-deps").classList.remove("active");
-    $("btn-show-deps").textContent = "⚡ Показать импорты и зависимости";
+    $("btn-show-deps").textContent = s.btnShowDeps;
   }
 
   if (lens === "structure") {
@@ -93,7 +145,6 @@ function applyLens(lens) {
   if (lens === "blast") {
     let target = selectedFile;
     if (!target) {
-      // Auto-pick the most depended-upon file so user sees Blast Radius immediately!
       const files = [...graph.nodes.values()].filter((n) => n.type === "file");
       files.sort((a, b) => b.importedBy.length - a.importedBy.length);
       target = files[0];
@@ -108,28 +159,27 @@ function applyLens(lens) {
     renderer.setLens("blast", blast);
     const totalAffected = Math.max(0, blast.levels.size - 1);
     const direct = [...blast.levels.values()].filter((d) => d === 1).length;
-    showBanner(`🔥 <strong>Blast Radius</strong> для <strong>${target.name}</strong>: затронуто <strong>${totalAffected}</strong> файлов (напрямую: ${direct}) · кликай на любой файл`);
+    showBanner(s.bannerBlast(target.name, totalAffected, direct));
     return;
   }
 
   if (lens === "health") {
     const h = graph.analyzeHealth();
     renderer.setLens("health", h);
-    showBanner(
-      `🩺 <strong>Health Score: ${h.score}/100</strong> · Циклы: <strong>${h.cycleNodeIds.size}</strong> · Монолиты: <strong>${h.godNodeIds.size}</strong> · Сироты: <strong>${h.orphanNodeIds.size}</strong>`
-    );
+    showBanner(s.bannerHealth(h.score, h.cycleNodeIds.size, h.godNodeIds.size, h.orphanNodeIds.size));
     return;
   }
 
   if (lens === "route") {
     const route = graph.computeReadingRoute();
     renderer.setLens("route", route);
-    const trail = route.steps.map((s, i) => `<strong>${i + 1}.</strong> ${s.name}`).join(" → ");
-    showBanner(`🧭 <strong>Маршрут чтения:</strong> ${trail || "нет файлов"}`);
+    const trail = route.steps.map((st, i) => `<strong>${i + 1}.</strong> ${st.name}`).join(" → ");
+    showBanner(s.bannerRoute(trail));
   }
 }
 
 function openInspector(node) {
+  const s = t();
   selectedFile = node;
   depActive = false;
   renderer.clearDepFocus();
@@ -144,12 +194,12 @@ function openInspector(node) {
   $("file-path").textContent = node.path;
 
   $("chip-lang").textContent = node.lang.name;
-  $("chip-lines").textContent = `${node.file.lines} строк`;
-  $("chip-deps").textContent = `← ${node.importedBy.length} используют · ${node.imports.length} импортирует →`;
+  $("chip-lines").textContent = `${node.file.lines} ${s.lines}`;
+  $("chip-deps").textContent = s.chipDeps(node.importedBy.length, node.imports.length);
 
   const btnDeps = $("btn-show-deps");
   btnDeps.classList.remove("active");
-  btnDeps.textContent = "⚡ Показать импорты и зависимости";
+  btnDeps.textContent = s.btnShowDeps;
 
   const lines = highlightCode(node.file.content);
   $("code-view").innerHTML = lines
@@ -160,14 +210,14 @@ function openInspector(node) {
   $("sym-count").textContent = syms.length;
   const symList = $("symbols-list");
   if (syms.length === 0) {
-    symList.innerHTML = `<li class="empty-note">Классы и функции не найдены</li>`;
+    symList.innerHTML = `<li class="empty-note">${s.emptySymbols}</li>`;
   } else {
     symList.innerHTML = syms
       .map(
-        (s) =>
-          `<li class="item-row" data-line="${s.line}">
-            <span><span class="sym-kind sym-${s.kind}">${s.kind}</span>${s.name}</span>
-            <span class="project-stats">:${s.line}</span>
+        (sym) =>
+          `<li class="item-row" data-line="${sym.line}">
+            <span><span class="sym-kind sym-${sym.kind}">${sym.kind}</span>${sym.name}</span>
+            <span class="project-stats">:${sym.line}</span>
           </li>`
       )
       .join("");
@@ -177,8 +227,8 @@ function openInspector(node) {
   }
 
   $("link-count").textContent = node.imports.length + node.importedBy.length;
-  renderLinkList($("links-out"), node.imports, "Нет исходящих импортов внутри проекта");
-  renderLinkList($("links-in"), node.importedBy, "Ни один файл проекта не импортирует этот файл");
+  renderLinkList($("links-out"), node.imports, s.emptyOut);
+  renderLinkList($("links-in"), node.importedBy, s.emptyIn);
 
   switchTab("code");
 }
@@ -232,17 +282,18 @@ function jumpToLine(lineNo) {
 }
 
 function switchTab(name) {
-  document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === name));
+  document.querySelectorAll(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === name));
   document.querySelectorAll(".tab-pane").forEach((p) => p.classList.toggle("active", p.id === `tab-${name}`));
 }
 
 function toggleDependenciesMode() {
   if (!selectedFile || !graph) return;
+  const s = t();
   if (depActive) {
     depActive = false;
     renderer.clearDepFocus();
     $("btn-show-deps").classList.remove("active");
-    $("btn-show-deps").textContent = "⚡ Показать импорты и зависимости";
+    $("btn-show-deps").textContent = s.btnShowDeps;
     if (currentLens === "structure") hideBanner();
     else applyLens(currentLens);
     return;
@@ -253,9 +304,9 @@ function toggleDependenciesMode() {
   depActive = true;
   renderer.setDepFocus(focus);
 
-  showBanner(`⚡ Импорты и зависимости для <strong>${selectedFile.path}</strong> (${focus.depLinks.length} связей)`);
+  showBanner(s.bannerDeps(selectedFile.path, focus.depLinks.length));
   $("btn-show-deps").classList.add("active");
-  $("btn-show-deps").textContent = "✕ Скрыть жёлтые лучи связей";
+  $("btn-show-deps").textContent = s.btnHideDeps;
 }
 
 // Ctrl+K Teleport Modal
@@ -277,7 +328,7 @@ function renderSearchResults(q) {
   searchIdx = 0;
   const ul = $("search-results");
   if (searchItems.length === 0) {
-    ul.innerHTML = `<li class="empty-note">Ничего не найдено</li>`;
+    ul.innerHTML = `<li class="empty-note">${t().searchEmpty}</li>`;
     return;
   }
   ul.innerHTML = searchItems
@@ -363,6 +414,13 @@ async function readBrowserFolder(fileList) {
 }
 
 // Event Bindings
+$("btn-lang").addEventListener("click", () => {
+  lang = lang === "en" ? "ru" : "en";
+  saveLang(lang);
+  applyI18n();
+  if (currentLens !== "structure" && !depActive) applyLens(currentLens);
+});
+
 document.querySelectorAll(".tab").forEach((btn) => {
   btn.addEventListener("click", () => switchTab(btn.dataset.tab));
 });
@@ -417,7 +475,7 @@ $("btn-demo").addEventListener("click", () => loadProject(DEMO_PROJECT));
 $("btn-export-svg").addEventListener("click", () => {
   if (!graph) return;
   exportUniverseSVG(graph, renderer);
-  showBanner(`📸 <strong>Векторный SVG</strong> сохранён!`);
+  showBanner(t().bannerSvgSaved);
 });
 $("btn-export-mmd").addEventListener("click", async () => {
   if (!graph) return;
@@ -426,11 +484,12 @@ $("btn-export-mmd").addEventListener("click", async () => {
   downloadTextFile(`${safe}_atlas.mmd`, mmd);
   try {
     await navigator.clipboard.writeText(mmd);
-    showBanner(`📐 <strong>Mermaid-граф</strong> скачан и скопирован в буфер обмена!`);
+    showBanner(t().bannerMmdCopied);
   } catch {
-    showBanner(`📐 <strong>Mermaid-граф</strong> сохранён в файл ${safe}_atlas.mmd`);
+    showBanner(t().bannerMmdSaved(`${safe}_atlas.mmd`));
   }
 });
+
 $("btn-collapse").addEventListener("click", () => {
   if (!graph) return;
   if (depActive) toggleDependenciesMode();
@@ -463,6 +522,7 @@ window.addEventListener("keydown", (e) => {
 
 // Boot
 async function boot() {
+  applyI18n();
   try {
     const res = await fetch("/api/project", { cache: "no-store" });
     if (res.ok) {
