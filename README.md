@@ -2,7 +2,7 @@
 
 > **Explore any codebase as a living interactive universe — understand architecture in 30 seconds.**
 
-[Русская версия](README_Ru.md)
+**[🚀 Try Live Demo](https://goblin-inc.github.io/Project-Atlas/)** · **[Русская версия](README_Ru.md)**
 
 **Project Atlas** turns local folders and public GitHub repositories into an interactive, 60 FPS constellation map. Instead of dumping 500 overlapping nodes at once, Atlas starts from the project root and lets you expand folders organically, inspect syntax-highlighted code on the right, and illuminate golden dependency rays on demand.
 
