@@ -19,7 +19,7 @@
   - **🧭 Reading Route** — automatically detects entry points and numbers the recommended onboarding trail (`1 → 2 → 3 → ...`).
 - **🔍 `Ctrl + K` Universe Teleport** — instant fuzzy search across files & folders; pressing Enter expands the path and flies the camera straight to the target star.
 - **🐙 Zero-Backend GitHub Loader + Local Folder Picker** — paste any `owner/repo` URL, open a local folder directly in the browser, or launch via CLI (`atlas .`) with zero external dependencies.
-- **📸 One-Click Export** — save a high-res **PNG** snapshot of the universe or export the dependency graph as **Mermaid (`.mmd`)** (copied to clipboard automatically).
+- **📸 One-Click Export** — save a crisp vector **SVG** snapshot of the universe (immune to browser Canvas anti-fingerprinting) or export the dependency graph as **Mermaid (`.mmd`)** (copied to clipboard automatically).
 - **🧠 Multi-Language Static Parser** — Python, JavaScript/TypeScript, Java, C/C++, Rust, Go, Lua, HTML, CSS.
 
 ---
