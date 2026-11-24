@@ -8,7 +8,7 @@ import { CosmosRenderer } from "./canvas.js";
 import { highlightCode } from "./parser.js";
 import { DEMO_PROJECT } from "./demo-data.js";
 import { loadGitHubRepo } from "./github.js";
-import { exportCanvasPNG, generateMermaid, downloadTextFile } from "./export.js";
+import { exportUniverseSVG, generateMermaid, downloadTextFile } from "./export.js";
 
 const IGNORE_SEGMENTS = new Set([
   ".git", "node_modules", "__pycache__", ".venv", "venv",
@@ -414,9 +414,10 @@ document.querySelectorAll(".chip-btn[data-repo]").forEach((btn) => {
 });
 
 $("btn-demo").addEventListener("click", () => loadProject(DEMO_PROJECT));
-$("btn-export-png").addEventListener("click", () => {
+$("btn-export-svg").addEventListener("click", () => {
   if (!graph) return;
-  exportCanvasPNG($("cosmos"), graph.project.name);
+  exportUniverseSVG(graph, renderer);
+  showBanner(`📸 <strong>Векторный SVG</strong> сохранён!`);
 });
 $("btn-export-mmd").addEventListener("click", async () => {
   if (!graph) return;
